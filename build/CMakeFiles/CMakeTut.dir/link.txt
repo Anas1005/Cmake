@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/CMakeTut.dir/src/main.cpp.o -o CMakeTut  libLibrary.a 

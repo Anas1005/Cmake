@@ -1,0 +1,6 @@
+/home/anassaif/CMakeTut/build/CMakeFiles/CMakeTut.dir
+/home/anassaif/CMakeTut/build/CMakeFiles/Library.dir
+/home/anassaif/CMakeTut/build/CMakeFiles/TestLibrary.dir
+/home/anassaif/CMakeTut/build/CMakeFiles/test.dir
+/home/anassaif/CMakeTut/build/CMakeFiles/edit_cache.dir
+/home/anassaif/CMakeTut/build/CMakeFiles/rebuild_cache.dir

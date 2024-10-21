@@ -1,0 +1,2 @@
+/usr/bin/ar qc libLibrary.a CMakeFiles/Library.dir/lib/Library/Library.cpp.o CMakeFiles/Library.dir/lib/Library/User.cpp.o CMakeFiles/Library.dir/lib/Library/Book.cpp.o
+/usr/bin/ranlib libLibrary.a

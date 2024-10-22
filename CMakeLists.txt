@@ -157,129 +157,108 @@
 #      )
 #      ```
 
+# ----------------------------------------
+# Stage 5: Installation Rules, Exporting Targets , Packaging with CPack
+# ----------------------------------------
 
+# 1. Setting up Installation Rules:
+#    - The `install()` command defines how files will be installed.
+#    - It is used to specify where the targets (libraries, executables) and associated files 
+#      (headers, config files) will be installed.
 
-# Specify the minimum version of CMake required to build this project.
-# This ensures that all the features used are supported in this version or later.
-# cmake_minimum_required(VERSION 3.16)
-# project(CMakeTut VERSION 1.0)
-
-# # Set the C++ standard to a modern version
-# set(CMAKE_CXX_STANDARD 17)
-# set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# # Optionally, turn on warnings as errors for best practices
-# add_compile_options(-Wall -Wextra -Werror)
-
-# # Create an interface library for project-wide settings
-# add_library(ProjectSettings INTERFACE)
-# target_compile_features(ProjectSettings INTERFACE cxx_std_17)
-
-# # Include the headers globally (modern approach)
-# include_directories(${CMAKE_SOURCE_DIR}/include)
-# # Add an option to build the MathFunctions library
-# option(USE_MATH_FUNCTIONS "Use the MathFunctions library" ON)
-
-# message(STATUS "USE_MATH_FUNCTIONS: ${USE_MATH_FUNCTIONS}")
-
-# if (USE_MATH_FUNCTIONS)
-
-#     # Add the library from lib/MathFunctions
-#     add_library(MathFunctions STATIC lib/MathFunctions/MathFunctions.cpp)
-    
-#     # Properly set the include directories for the library
-#     target_include_directories(MathFunctions PUBLIC ${CMAKE_SOURCE_DIR}/include)
-# endif()
-
-# # Add the executable and link to the library if available
-# add_executable(CMakeTut src/main.cpp)
-
-# if (USE_MATH_FUNCTIONS)
-#     target_link_libraries(CMakeTut PRIVATE MathFunctions)
-#     target_compile_definitions(CMakeTut PRIVATE USE_MATH_FUNCTIONS)
-# else()
-#     target_link_libraries(CMakeTut PRIVATE ProjectSettings)   
-# endif()
-
-# # Apply generator expressions to add warning flags in Debug mode
-# target_compile_options(CMakeTut PRIVATE
-#     $<$<CONFIG:Debug>:-Wpedantic>
-#     $<$<CXX_COMPILER_ID:GNU>:-Wshadow>
+# Install the 'Library' target. We specify the destinations:
+# - LIBRARY (for shared libraries) goes to 'lib' directory.
+# - ARCHIVE (for static libraries) goes to 'lib' directory.
+# - RUNTIME (for executables) goes to 'bin' directory.
+# - INCLUDES (for headers) go to 'include' directory.
+# install(TARGETS Library
+#     EXPORT LibraryTargets                # To export the target for other projects
+#     LIBRARY DESTINATION lib              # Where shared libraries will be installed
+#     ARCHIVE DESTINATION lib              # Where static libraries will be installed
+#     RUNTIME DESTINATION bin              # Where executables will be installed
+#     INCLUDES DESTINATION include         # Where the headers will be installed
 # )
 
+# Install the 'CMakeTut' executable into the 'bin' directory.
+# install(TARGETS CMakeTut
+#     RUNTIME DESTINATION bin)
 
-# cmake_minimum_required(VERSION 3.16)
-# project(CMakeTut VERSION 1.0)
+# # Install the headers (CMake includes) into the 'include' directory.
+# install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
+#     DESTINATION include
+#     FILES_MATCHING PATTERN "*.h")
 
-# # Set the C++ standard to a modern version
-# set(CMAKE_CXX_STANDARD 17)
-# set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# # Optionally, turn on warnings as errors for best practices
-# add_compile_options(-Wall -Wextra -Werror)
+# 2. Exporting Targets:
+#    - Exporting enables external projects to find and link against your library.
+#    - Use the `install()` command with `EXPORT` to export your library’s targets.
+#    - This generates a CMake config file that other projects can use.
 
-# # Create an interface library for project-wide settings
-# add_library(ProjectSettings INTERFACE)
-# target_compile_features(ProjectSettings INTERFACE cxx_std_17)
+# Export the 'LibraryTargets' target for external projects.
+# The config file will be installed in the specified path (lib/cmake/Library).
+# install(EXPORT LibraryTargets
+#     FILE LibraryConfig.cmake             # Configuration file generated for users to locate the library
+#     DESTINATION lib/cmake/Library)       # Directory for the config file
 
-# # Include the headers globally (modern approach)
-# include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# # Add an option to build the MathFunctions library
-# option(USE_MATH_FUNCTIONS "Use the MathFunctions library" ON)
+# 3. Packaging the Project:
+#    - CPack can be used to package your project into installable formats (e.g., .deb, .rpm).
+#    - The `include(CPack)` command integrates CPack to generate packages easily.
+#    - CPack uses the installation rules set by `install()` for packaging.
 
-# message(STATUS "USE_MATH_FUNCTIONS: ${USE_MATH_FUNCTIONS}")
+# Include CPack to enable packaging of the project.
+# include(CPack)
 
-# if (USE_MATH_FUNCTIONS)
-#     # Add the library from lib/MathFunctions
-#     add_library(MathFunctions STATIC lib/MathFunctions/MathFunctions.cpp)
-    
-#     # Properly set the include directories for the library
-#     target_include_directories(MathFunctions PUBLIC ${CMAKE_SOURCE_DIR}/include)
-# endif()
+#    - Generate a .deb package with all installed components (libraries, binaries, headers).
+#    - When you run `make package`, CPack will create the necessary package.
 
-# # Add the executable and link to the library if available
-# add_executable(CMakeTut src/main.cpp)
+# ----------------------------------------
+#  End User Instructions
+# ----------------------------------------
 
-# if (USE_MATH_FUNCTIONS)
-#     target_link_libraries(CMakeTut PRIVATE MathFunctions)
-#     target_compile_definitions(CMakeTut PRIVATE USE_MATH_FUNCTIONS)
-# else()
-#     target_link_libraries(CMakeTut PRIVATE ProjectSettings)   
-# endif()
+# 1. Downloading and Installing the Package:
+#    - The end user can download the .deb package you created using CPack.
+#    - To install the package on their system:
+#        sudo dpkg -i CMakeTut-<version>.deb
 
-# # Apply generator expressions to add warning flags in Debug mode
-# target_compile_options(CMakeTut PRIVATE
-#     $<$<CONFIG:Debug>:-Wpedantic>
-#     $<$<CXX_COMPILER_ID:GNU>:-Wshadow>
-# )
+# 2. Running the Project:
+#    - Once installed, the executable (e.g., 'CMakeTut') will be located in '/usr/bin'.
+#    - The user can run the project directly by executing:
+#        CMakeTut
 
-# # Add testing support
-# enable_testing()
+# 3. Using the Library:
+#    - If the user wants to use the 'Library' in their own CMake project:
+#      a) Make sure the package is installed on their system.
+#      b) In their own `CMakeLists.txt`:
+#         - Use `find_package(Library REQUIRED)` to locate your library.
+#         - Link to your library with:
+#             target_link_libraries(<your_target> Library)
 
-# # Add a new target for tests only if GTest is available
-# find_package(GTest REQUIRED)
-# include(GoogleTest)
+# 4. Ensuring CMake Can Locate the Library:
+#    - CMake will look for the 'LibraryConfig.cmake' in predefined paths like '/usr/lib/cmake/' or '/usr/local/lib/cmake/.
+#    - If installed elsewhere, the user will have to specify the path to the package by running CMake with:
+#        cmake .. -DCMAKE_PREFIX_PATH=/usr/lib/cmake/Library or LMS/
 
-# # Add the test executable
-# add_executable(TestMathFunctions tests/TestMathFunctions.cpp)
+#    - After this, CMake will be able to find and use the library without the user manually specifying the path every time.
+#    - CMake's flexibility allows users to easily integrate your library into their projects, provided they have the correct installation path.
 
-# # Link the test executable to GTest and MathFunctions library
-# target_link_libraries(TestMathFunctions PRIVATE GTest::GTest GTest::Main MathFunctions)
+# ----------------------------------------
+# Summary:
+# - The user installs the package via dpkg, runs the executable from '/usr/bin', or integrates the library into their project using CMake's find_package.
 
-# # Add include directories for tests
-# target_include_directories(TestMathFunctions PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
-# # Register the test with CMake
-# gtest_discover_tests(TestMathFunctions)
 
 
 cmake_minimum_required(VERSION 3.16)
-project(CMakeTut VERSION 1.0)
+project(CMakeTut VERSION 2.0)
 
 # Set the C++ standard to a modern version
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(PACKAGE_VERSION ${PROJECT_VERSION})
+set(PACKAGE_INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include)
+set(PACKAGE_LIBRARY_TARGET Library)
+
 
 # Optionally, turn on warnings as errors for best practices
 add_compile_options(-Wall -Wextra -Werror)
@@ -294,33 +273,66 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # Add the executable for the main application
 add_executable(CMakeTut src/main.cpp)
 
-# Add an option to build the Library Management System
+# Option to build the Library Management System
 option(USE_LIBRARY "Use the Library Management System" ON)
 
 message(STATUS "USE_LIBRARY: ${USE_LIBRARY}")
 
 if (USE_LIBRARY)
-    # Add the library from lib/Library
+    # Add the library
     add_library(Library STATIC lib/Library/Library.cpp lib/Library/User.cpp lib/Library/Book.cpp)
 
-    # Properly set the include directories for the library
+    # Include directories for the library
     target_include_directories(Library PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-    # Link the main executable to the Library
+    # Link the executable to the Library
     target_link_libraries(CMakeTut PRIVATE Library)
 
     target_compile_definitions(CMakeTut PRIVATE USE_LIBRARY)
+
+    install(TARGETS Library
+    EXPORT LibraryTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+install(TARGETS CMakeTut
+    RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
+)
+
+
+    # Generate the configuration files for the library
+    include(CMakePackageConfigHelpers)
+
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/LibraryConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/LibraryConfig.cmake"
+        INSTALL_DESTINATION lib/cmake/LMS
+        NO_SET_AND_CHECK_MACRO
+        NO_CHECK_REQUIRED_COMPONENTS_MACRO
+    )
+
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/LibraryConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion
+    )
+
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/LibraryConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/LibraryConfigVersion.cmake"
+        DESTINATION lib/cmake/LMS
+    )
 else()
-    # Link ProjectSettings
     target_link_libraries(CMakeTut PRIVATE ProjectSettings)
     message(STATUS "Library Management System is disabled.")
 endif()
-
-# Apply generator expressions to add warning flags in Debug mode
-target_compile_options(CMakeTut PRIVATE
-    $<$<CONFIG:Debug>:-Wpedantic>
-    $<$<CXX_COMPILER_ID:GNU>:-Wshadow>
-)
 
 # Add testing support
 enable_testing()
@@ -329,17 +341,16 @@ enable_testing()
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
-# Add the test executable for the Library Management System if USE_LIBRARY is ON
 if (USE_LIBRARY)
-    # Add the test executable for the Library Management System
     add_executable(TestLibrary tests/TestLibrary.cpp)
-
-    # Link the test executable to GTest and the Library
     target_link_libraries(TestLibrary PRIVATE GTest::GTest GTest::Main Library)
-
-    # Add include directories for tests
     target_include_directories(TestLibrary PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-    # Register the test with CMake
     gtest_discover_tests(TestLibrary)
 endif()
+
+# CPack configuration for packaging
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_NAME "CMakeTut")
+set(CPACK_PACKAGE_VERSION "4.0")
+set(CPACK_PACKAGE_CONTACT "yourname@example.com")
+include(CPack)

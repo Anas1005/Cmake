@@ -61,21 +61,6 @@ Stage 12: Packaging Debug and Release
 1. Managing Debug and Release Configurations
    - Learn how to configure different build types
 */
-// #include <iostream>
-// #ifdef USE_MATH_FUNCTIONS
-// #include "MathFunctions.h"
-// #endif
-
-// int main() {
-//     #ifdef USE_MATH_FUNCTIONS
-//     double result = squareRoot(4);
-//     std::cout << "sqrt(4) = " << result << std::endl;
-//     #else
-//     std::cout << "MathFunctions library is not available." << std::endl;
-//     #endif
-//     return 0;
-// }
-
 
 #include <iostream>
 #include "Library.h"
